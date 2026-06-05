@@ -29,6 +29,7 @@ import {
     type RpcError,
     type TypedRpcError,
     type WebsocketAsyncAPIOptions,
+    type WsClient,
 } from "@ws-asyncapi/client";
 import {
     connectionStore,
@@ -48,8 +49,12 @@ import type { AnyChannel, InferClient } from "ws-asyncapi";
 
 export { streamFold, type StreamReduce } from "@ws-asyncapi/query-core";
 
-/** Bridge a core {@link Subscribable} into a Solid accessor (signal). */
-function fromStore<T>(store: Subscribable<T>): Accessor<T> {
+/**
+ * Bridge any `query-core` {@link Subscribable} (e.g. `cursorsStore` from
+ * `@ws-asyncapi/cursors`, or your own) into a Solid accessor (signal). The
+ * generic escape hatch that keeps cursor/other opinions out of this package.
+ */
+export function fromStore<T>(store: Subscribable<T>): Accessor<T> {
     const [value, setValue] = createSignal(store.getSnapshot());
     const unsub = store.subscribe(() => setValue(() => store.getSnapshot()));
     onCleanup(unsub);
@@ -70,12 +75,15 @@ export interface PresenceAccessors<State> {
     members: Accessor<Map<string, State>>;
     self: Accessor<string | null>;
     set: (state: State) => Promise<void>;
+    /** volatile, fire-and-forget update (cursor hot path) — see `presence.update` */
+    update: (patch: Partial<State>) => void;
     clear: () => Promise<void>;
 }
 
 export interface SolidClient<T extends Shape> {
-    /** the underlying client (escape hatch: `opened`, raw `request`, …) */
-    client: ReturnType<typeof createClient<AnyChannel>>;
+    /** the underlying, precisely-typed client (escape hatch: `opened`, raw
+     *  `request`, `presence.update`, …; also what `cursorsStore` consumes) */
+    client: WsClient<T>;
 
     createRequest<C extends keyof T["rpcMap"]>(
         command: C,
@@ -175,6 +183,7 @@ export function createSolidClient<C extends AnyChannel>(
             members: () => snap().members,
             self: () => snap().self,
             set: presence.set,
+            update: presence.update,
             clear: presence.clear,
         };
     }
