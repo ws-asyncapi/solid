@@ -19,7 +19,9 @@
             "require": "./dist/index.cjs"
         }
     },
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "prepublishOnly": "bunx pkgroll"
     },
@@ -35,6 +37,7 @@
         "@tanstack/solid-query": "^5.101.0",
         "@types/bun": "latest",
         "pkgroll": "^2.11.2",
-        "solid-js": "^1.9.13"
+        "solid-js": "^1.9.13",
+        "typescript": "^5.8.2"
     }
 }
