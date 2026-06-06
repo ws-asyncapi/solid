@@ -1,0 +1,40 @@
+{
+    "name": "@ws-asyncapi/solid",
+    "version": "0.1.0",
+    "description": "Typed SolidJS primitives for ws-asyncapi — RPCs as TanStack Solid Query queries/mutations, plus live presence, history, and streams",
+    "license": "MIT",
+    "type": "module",
+    "author": {
+        "url": "https://github.com/kravetsone",
+        "name": "kravets"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ws-asyncapi/solid.git"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "files": ["dist"],
+    "scripts": {
+        "prepublishOnly": "bunx pkgroll"
+    },
+    "peerDependencies": {
+        "@tanstack/solid-query": "^5.0.0",
+        "@ws-asyncapi/client": "^0.1.0",
+        "@ws-asyncapi/query-core": "^0.1.0",
+        "solid-js": "^1.8.0",
+        "ws-asyncapi": "^0.1.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
+        "@tanstack/solid-query": "^5.101.0",
+        "@types/bun": "latest",
+        "pkgroll": "^2.11.2",
+        "solid-js": "^1.9.13"
+    }
+}
